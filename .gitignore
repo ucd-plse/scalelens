@@ -1,0 +1,39 @@
+## eclipse stuff
+.classpath
+.project
+.settings/
+.vscode/
+.idea/
+
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+/bin/
+
+# Build outcomes
+target/
+heap_measurement_agent.so
+# agent folder at root from build-pack.sh
+/agent/
+
+# experiment outcomes
+**/traces/
+**/measures/
+**/cmds/
+**/instrumented/
+*.nm
+
+
+# CodeQL analysis
+**.lock.yml

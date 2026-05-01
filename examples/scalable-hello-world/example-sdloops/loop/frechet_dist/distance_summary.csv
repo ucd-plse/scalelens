@@ -1,0 +1,4 @@
+Method,Line Number,Category,Complexity
+HelloWorld.whileLoopMethod,60,linear,x
+HelloWorld.forLoopMethod,51,linear,x
+HelloWorld.forLoopMethod,52,super-linear,x^2

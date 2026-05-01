@@ -1,0 +1,12 @@
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE}
+
+USER scaleview
+
+WORKDIR /home/scaleview/scaleview-core
+
+ENV GIT_DISCOVERY_ACROSS_FILESYSTEM=1
+
+ENTRYPOINT []
+
+CMD ["bash"]

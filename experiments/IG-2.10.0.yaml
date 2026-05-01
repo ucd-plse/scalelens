@@ -1,0 +1,39 @@
+experiment:
+  system: Ignite
+  system_id: IG
+  version: 2.10.0
+  scale: &scale 32
+  cluster_base: &cluster_base test
+  sleep_time_normal: &sleep_time_normal 30
+  sleep_time_long: &sleep_time_long 120
+  trace_location: node-1
+
+
+workloads:
+  add-node:
+    filename: w-add-node.sh
+    number_of_dimensions: 1
+    run: false
+    dimensions:
+      - node
+
+  add-table:
+    filename: w-add-table.sh
+    number_of_dimensions: 1
+    run: false
+    dimensions:
+      - table
+
+  add-data:
+    filename: w-add-data.sh
+    number_of_dimensions: 1
+    run: false
+    dimensions:
+      - databatch
+  
+  add-data-cache:
+    filename: w-add-data-cache.sh
+    number_of_dimensions: 1
+    run: true
+    dimensions:
+      - databatch

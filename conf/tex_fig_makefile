@@ -1,0 +1,23 @@
+MAIN=main.pdf
+DVI=main.dvi
+PS=main.ps
+OUT=report.pdf
+
+main:				_main ps pdf clean
+
+_main:
+					latex main.tex
+
+ps: 					$(DVI)
+		 			dvips -o $(PS) main
+
+pdf: 					$(PS)
+					ps2pdf14 $(PS)
+
+
+open:
+					mv $(MAIN) $(OUT)
+					pdfreader $(OUT)
+
+clean:
+					rm *.log *.blg  *.aux *.bbl *.dvi *.ps *.out

@@ -1,0 +1,7 @@
+{
+  "entryPoints": [
+    { "className": "Fully qualified class name goes here, using . as separator",
+      "methodSignature" : "method signature, using name and args (not return type). example: method(int,boolean,java.lang.String)"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Ignite Configuration -->
+    <bean id="ignite.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
+
+        <!-- Ignite Instance Name -->
+        <property name="igniteInstanceName" value="@IG_INSTANCE_NAME@"/>
+
+        <property name="localHost" value="@IP@"/>
+
+        <!-- Communication Configuration -->
+        <property name="communicationSpi">
+            <bean class="org.apache.ignite.spi.communication.tcp.TcpCommunicationSpi">
+                <property name="localPort" value="@LOCAL_PORT@"/>
+                <property name="localAddress" value="@IP@"/>
+            </bean>
+        </property>
+
+        <!-- Discovery SPI (Multicast-based Discovery on Localhost) -->
+        <property name="discoverySpi">
+            <bean class="org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi">
+                <property name="forceServerMode" value="true"/>
+                <property name="ipFinder">
+                    <!-- <bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.multicast.TcpDiscoveryMulticastIpFinder"> -->
+                    <bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder">
+                        <property name="addresses">
+                            <list>
+                                <value>@IP@:@PORT_BASE@..@PORT_BASE_END@</value>                                <!-- Localhost-based discovery -->
+                            </list>
+                        </property>
+                    </bean>
+                </property>
+                <property name="localAddress" value="@IP@"/>
+            </bean>
+        </property>
+
+        <property name="workDirectory" value="@WORKING_DIR@"/>
+
+    </bean>
+</beans>

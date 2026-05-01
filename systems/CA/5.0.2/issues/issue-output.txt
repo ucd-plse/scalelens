@@ -1,0 +1,858 @@
+
+## Main Issues 
+
+1. SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.make(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object)]
+2. Exception in thread "ProfilerMain" java.lang.LinkageError: loader 'bootstrap' attempted duplicate class definition for java.lang.invoke.BoundMethodHandle$Species_LLLLLLL. (java.lang.invoke.BoundMethodHandle$Species_LLLLLLL is in module java.base of loader 'bootstrap')
+3. SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Exception in thread "ProfilerMain" java.lang.LinkageError: loader 'bootstrap' attempted duplicate class definition for java.lang.invoke.BoundMethodHandle$Species_LLLLLLL. (java.lang.invoke.BoundMethodHandle$Species_LLLLLLL is in module java.base of loader 'bootstrap')
+	at java.base/jdk.internal.misc.Unsafe.defineClass0(Native Method)
+	at java.base/jdk.internal.misc.Unsafe.defineClass(Unsafe.java:1192)
+	at java.base/java.lang.invoke.ClassSpecializer$Factory.generateConcreteSpeciesCode(ClassSpecializer.java:593)
+	at java.base/java.lang.invoke.ClassSpecializer$Factory.loadSpecies(ClassSpecializer.java:490)
+	at java.base/java.lang.invoke.ClassSpecializer.findSpecies(ClassSpecializer.java:194)
+	at java.base/java.lang.invoke.BoundMethodHandle$SpeciesData.extendWith(BoundMethodHandle.java:352)
+	at java.base/java.lang.invoke.LambdaFormEditor.newSpeciesData(LambdaFormEditor.java:388)
+	at java.base/java.lang.invoke.LambdaFormEditor.makeArgumentCombinationForm(LambdaFormEditor.java:721)
+	at java.base/java.lang.invoke.LambdaFormEditor.foldArgumentsForm(LambdaFormEditor.java:844)
+	at java.base/java.lang.invoke.MethodHandles.foldArguments(MethodHandles.java:4323)
+	at java.base/java.lang.invoke.StringConcatFactory$MethodHandleInlineCopyStrategy.generate(StringConcatFactory.java:1560)
+	at java.base/java.lang.invoke.StringConcatFactory.generate(StringConcatFactory.java:756)
+	at java.base/java.lang.invoke.StringConcatFactory.doStringConcat(StringConcatFactory.java:665)
+	at java.base/java.lang.invoke.StringConcatFactory.makeConcatWithConstants(StringConcatFactory.java:581)
+	at java.base/java.lang.invoke.BootstrapMethodInvoker.invoke(BootstrapMethodInvoker.java:99)
+	at java.base/java.lang.invoke.CallSite.makeSite(CallSite.java:307)
+	at java.base/java.lang.invoke.MethodHandleNatives.linkCallSiteImpl(MethodHandleNatives.java:258)
+	at java.base/java.lang.invoke.MethodHandleNatives.linkCallSite(MethodHandleNatives.java:248)
+	at java.xml/javax.xml.parsers.FactoryFinder.find(FactoryFinder.java:238)
+	at java.xml/javax.xml.parsers.SAXParserFactory.newInstance(SAXParserFactory.java:147)
+	at ch.qos.logback.core.joran.event.SaxEventRecorder.buildSaxParser(SaxEventRecorder.java:79)
+	at ch.qos.logback.core.joran.event.SaxEventRecorder.recordEvents(SaxEventRecorder.java:57)
+	at ch.qos.logback.core.joran.GenericConfigurator.doConfigure(GenericConfigurator.java:151)
+	at ch.qos.logback.core.joran.GenericConfigurator.doConfigure(GenericConfigurator.java:110)
+	at ch.qos.logback.core.joran.GenericConfigurator.doConfigure(GenericConfigurator.java:53)
+	at ch.qos.logback.classic.util.ContextInitializer.configureByResource(ContextInitializer.java:64)
+	at ch.qos.logback.classic.util.ContextInitializer.autoConfig(ContextInitializer.java:134)
+	at org.slf4j.impl.StaticLoggerBinder.init(StaticLoggerBinder.java:84)
+	at org.slf4j.impl.StaticLoggerBinder.<clinit>(StaticLoggerBinder.java:55)
+	at org.slf4j.LoggerFactory.bind(LoggerFactory.java:150)
+	at org.slf4j.LoggerFactory.performInitialization(LoggerFactory.java:124)
+	at org.slf4j.LoggerFactory.getILoggerFactory(LoggerFactory.java:417)
+	at org.slf4j.LoggerFactory.getLogger(LoggerFactory.java:362)
+	at org.slf4j.LoggerFactory.getLogger(LoggerFactory.java:388)
+	at org.apache.cassandra.service.CassandraDaemon.<clinit>(CassandraDaemon.java:136)
+
+
+
+
+
+########## Logs
+
+
+[run-all.sh] Running all experiments for scale to size [4]
+[w-add-ks.sh] Setting up node at [/home/cc/scaleview-core/workdir/test]
+[./setup-node.sh] Using heavy config for node [node-1]
+[./setup-node.sh] Usuing snitch [SimpleSnitch]
+[./setup-node.sh] Recreating [/home/cc/scaleview-core/workdir/test/node-1]
+[./setup-node.sh] Copying templates to [/home/cc/scaleview-core/workdir/test/node-1/conf]
+[./setup-node.sh] Performing replacements...
+[./setup-node.sh] done, setup node [node-1] at [/home/cc/scaleview-core/workdir/test/node-1]
+[./start-node.sh] Executing [java  --patch-module java.base=agent/ScaleLearningAgent.jar:agent/javassist-3.21.0-GA.jar --add-opens java.base/scaleview.agent.main=java.instrument --add-reads java.base=java.logging,java.instrument --add-opens java.base/java.util=ALL-UNNAMED --add-exports java.logging/java.util.logging=java.base -Djdk.attach.allowAttachSelf -javaagent:agent/ScaleLearningAgent.jar=profiler:name=methods,coreThreads=16,maxThreads=16,outputDirectory=/home/cc/scaleview-core/workdir/test/node-1/traces,waitWhenShutDown=true,flushThreshold=100,inclusions=org.apache.cassandra;commandThread:commandDirectory=/home/cc/scaleview-core/workdir/test/node-1/cmds,sleepTime=500 -Dscaleview.logFile=/home/cc/scaleview-core/workdir/agent/log-default.properties -cp "agent/ScaleLearningAgent.jar:agent/javassist-3.21.0-GA.jar:system/*:/home/cc/scaleview-core/workdir/test/node-1/conf" -Dcassandra.jmx.local.port=2001 -Dcassandra.available_processors=4 -Dcassandra.ring_delay_ms=30000 -Dcassandra.skip_schema_check=true -Dcassandra.consistent.rangemovement=false -Dcassandra-pidfile=/home/cc/scaleview-core/workdir/test/node-1/pid -Dcassandra.config=file:///home/cc/scaleview-core/workdir/test/node-1/conf/cassandra.yaml -Dcassandra.logdir=/home/cc/scaleview-core/workdir/test/node-1/logs -Dlogback.configurationFile=/home/cc/scaleview-core/workdir/test/node-1/conf/logback.xml -Xmx128G -Xms128G -XX:+UseG1GC -Xss256k -XX:ParallelGCThreads=8 -XX:CICompilerCount=2 -XX:ActiveProcessorCount=8  -XX:ConcGCThreads=8 org.apache.cassandra.service.CassandraDaemon]
+[./start-node.sh] Node started with pid: 17219
+[./start-node.sh] Sleeping for 120 seconds to wait for Cassandra to start...
+
+
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.speciesData()]
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.make(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object)]
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendL(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,java.lang.Object)]
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendI(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,int)]
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendJ(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,long)]
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendF(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,float)]
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendD(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,double)]
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWith(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm)]
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.speciesData()]
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.make(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object)]
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendL(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,java.lang.Object)]
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendI(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,int)]
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendJ(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,long)]
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendF(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,float)]
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendD(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,double)]
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWith(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm)]
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:41:44 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Exception in thread "ProfilerMain" java.lang.LinkageError: loader 'bootstrap' attempted duplicate class definition for java.lang.invoke.BoundMethodHandle$Species_LLLLLLL. (java.lang.invoke.BoundMethodHandle$Species_LLLLLLL is in module java.base of loader 'bootstrap')
+	at java.base/jdk.internal.misc.Unsafe.defineClass0(Native Method)
+	at java.base/jdk.internal.misc.Unsafe.defineClass(Unsafe.java:1192)
+	at java.base/java.lang.invoke.ClassSpecializer$Factory.generateConcreteSpeciesCode(ClassSpecializer.java:593)
+	at java.base/java.lang.invoke.ClassSpecializer$Factory.loadSpecies(ClassSpecializer.java:490)
+	at java.base/java.lang.invoke.ClassSpecializer.findSpecies(ClassSpecializer.java:194)
+	at java.base/java.lang.invoke.BoundMethodHandle$SpeciesData.extendWith(BoundMethodHandle.java:352)
+	at java.base/java.lang.invoke.LambdaFormEditor.newSpeciesData(LambdaFormEditor.java:388)
+	at java.base/java.lang.invoke.LambdaFormEditor.makeArgumentCombinationForm(LambdaFormEditor.java:721)
+	at java.base/java.lang.invoke.LambdaFormEditor.foldArgumentsForm(LambdaFormEditor.java:844)
+	at java.base/java.lang.invoke.MethodHandles.foldArguments(MethodHandles.java:4323)
+	at java.base/java.lang.invoke.StringConcatFactory$MethodHandleInlineCopyStrategy.generate(StringConcatFactory.java:1560)
+	at java.base/java.lang.invoke.StringConcatFactory.generate(StringConcatFactory.java:756)
+	at java.base/java.lang.invoke.StringConcatFactory.doStringConcat(StringConcatFactory.java:665)
+	at java.base/java.lang.invoke.StringConcatFactory.makeConcatWithConstants(StringConcatFactory.java:581)
+	at java.base/java.lang.invoke.BootstrapMethodInvoker.invoke(BootstrapMethodInvoker.java:99)
+	at java.base/java.lang.invoke.CallSite.makeSite(CallSite.java:307)
+	at java.base/java.lang.invoke.MethodHandleNatives.linkCallSiteImpl(MethodHandleNatives.java:258)
+	at java.base/java.lang.invoke.MethodHandleNatives.linkCallSite(MethodHandleNatives.java:248)
+	at java.xml/javax.xml.parsers.FactoryFinder.find(FactoryFinder.java:238)
+	at java.xml/javax.xml.parsers.SAXParserFactory.newInstance(SAXParserFactory.java:147)
+	at ch.qos.logback.core.joran.event.SaxEventRecorder.buildSaxParser(SaxEventRecorder.java:79)
+	at ch.qos.logback.core.joran.event.SaxEventRecorder.recordEvents(SaxEventRecorder.java:57)
+	at ch.qos.logback.core.joran.GenericConfigurator.doConfigure(GenericConfigurator.java:151)
+	at ch.qos.logback.core.joran.GenericConfigurator.doConfigure(GenericConfigurator.java:110)
+	at ch.qos.logback.core.joran.GenericConfigurator.doConfigure(GenericConfigurator.java:53)
+	at ch.qos.logback.classic.util.ContextInitializer.configureByResource(ContextInitializer.java:64)
+	at ch.qos.logback.classic.util.ContextInitializer.autoConfig(ContextInitializer.java:134)
+	at org.slf4j.impl.StaticLoggerBinder.init(StaticLoggerBinder.java:84)
+	at org.slf4j.impl.StaticLoggerBinder.<clinit>(StaticLoggerBinder.java:55)
+	at org.slf4j.LoggerFactory.bind(LoggerFactory.java:150)
+	at org.slf4j.LoggerFactory.performInitialization(LoggerFactory.java:124)
+	at org.slf4j.LoggerFactory.getILoggerFactory(LoggerFactory.java:417)
+	at org.slf4j.LoggerFactory.getLogger(LoggerFactory.java:362)
+	at org.slf4j.LoggerFactory.getLogger(LoggerFactory.java:388)
+	at org.apache.cassandra.service.CassandraDaemon.<clinit>(CassandraDaemon.java:136)
+Jan 24, 2025 7:41:44 PM scaleview.agent.stub.ProfilingStub$1 run
+SEVERE: Shutting down profiling stub...
+[./start-node.sh] Cassandra is not using port 9042, retrying... (Attempt 1)
+[./start-node.sh] Node started with pid: 17295
+[./start-node.sh] Sleeping for 130 seconds to wait for Cassandra to start...
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.speciesData()]
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.make(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object)]
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendL(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,java.lang.Object)]
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendI(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,int)]
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendJ(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,long)]
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendF(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,float)]
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendD(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,double)]
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWith(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm)]
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.speciesData()]
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.make(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object)]
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendL(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,java.lang.Object)]
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendI(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,int)]
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendJ(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,long)]
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendF(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,float)]
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendD(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,double)]
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWith(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm)]
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:44:14 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Exception in thread "ProfilerMain" java.lang.LinkageError: loader 'bootstrap' attempted duplicate class definition for java.lang.invoke.BoundMethodHandle$Species_LLLLLLL. (java.lang.invoke.BoundMethodHandle$Species_LLLLLLL is in module java.base of loader 'bootstrap')
+	at java.base/jdk.internal.misc.Unsafe.defineClass0(Native Method)
+	at java.base/jdk.internal.misc.Unsafe.defineClass(Unsafe.java:1192)
+	at java.base/java.lang.invoke.ClassSpecializer$Factory.generateConcreteSpeciesCode(ClassSpecializer.java:593)
+	at java.base/java.lang.invoke.ClassSpecializer$Factory.loadSpecies(ClassSpecializer.java:490)
+	at java.base/java.lang.invoke.ClassSpecializer.findSpecies(ClassSpecializer.java:194)
+	at java.base/java.lang.invoke.BoundMethodHandle$SpeciesData.extendWith(BoundMethodHandle.java:352)
+	at java.base/java.lang.invoke.LambdaFormEditor.newSpeciesData(LambdaFormEditor.java:388)
+	at java.base/java.lang.invoke.LambdaFormEditor.makeArgumentCombinationForm(LambdaFormEditor.java:721)
+	at java.base/java.lang.invoke.LambdaFormEditor.foldArgumentsForm(LambdaFormEditor.java:844)
+	at java.base/java.lang.invoke.MethodHandles.foldArguments(MethodHandles.java:4323)
+	at java.base/java.lang.invoke.StringConcatFactory$MethodHandleInlineCopyStrategy.generate(StringConcatFactory.java:1560)
+	at java.base/java.lang.invoke.StringConcatFactory.generate(StringConcatFactory.java:756)
+	at java.base/java.lang.invoke.StringConcatFactory.doStringConcat(StringConcatFactory.java:665)
+	at java.base/java.lang.invoke.StringConcatFactory.makeConcatWithConstants(StringConcatFactory.java:581)
+	at java.base/java.lang.invoke.BootstrapMethodInvoker.invoke(BootstrapMethodInvoker.java:99)
+	at java.base/java.lang.invoke.CallSite.makeSite(CallSite.java:307)
+	at java.base/java.lang.invoke.MethodHandleNatives.linkCallSiteImpl(MethodHandleNatives.java:258)
+	at java.base/java.lang.invoke.MethodHandleNatives.linkCallSite(MethodHandleNatives.java:248)
+	at java.xml/javax.xml.parsers.FactoryFinder.find(FactoryFinder.java:238)
+	at java.xml/javax.xml.parsers.SAXParserFactory.newInstance(SAXParserFactory.java:147)
+	at ch.qos.logback.core.joran.event.SaxEventRecorder.buildSaxParser(SaxEventRecorder.java:79)
+	at ch.qos.logback.core.joran.event.SaxEventRecorder.recordEvents(SaxEventRecorder.java:57)
+	at ch.qos.logback.core.joran.GenericConfigurator.doConfigure(GenericConfigurator.java:151)
+	at ch.qos.logback.core.joran.GenericConfigurator.doConfigure(GenericConfigurator.java:110)
+	at ch.qos.logback.core.joran.GenericConfigurator.doConfigure(GenericConfigurator.java:53)
+	at ch.qos.logback.classic.util.ContextInitializer.configureByResource(ContextInitializer.java:64)
+	at ch.qos.logback.classic.util.ContextInitializer.autoConfig(ContextInitializer.java:134)
+	at org.slf4j.impl.StaticLoggerBinder.init(StaticLoggerBinder.java:84)
+	at org.slf4j.impl.StaticLoggerBinder.<clinit>(StaticLoggerBinder.java:55)
+	at org.slf4j.LoggerFactory.bind(LoggerFactory.java:150)
+	at org.slf4j.LoggerFactory.performInitialization(LoggerFactory.java:124)
+	at org.slf4j.LoggerFactory.getILoggerFactory(LoggerFactory.java:417)
+	at org.slf4j.LoggerFactory.getLogger(LoggerFactory.java:362)
+	at org.slf4j.LoggerFactory.getLogger(LoggerFactory.java:388)
+	at org.apache.cassandra.service.CassandraDaemon.<clinit>(CassandraDaemon.java:136)
+Jan 24, 2025 7:44:14 PM scaleview.agent.stub.ProfilingStub$1 run
+SEVERE: Shutting down profiling stub...
+[./start-node.sh] Cassandra is not using port 9042, retrying... (Attempt 2)
+[./start-node.sh] Node started with pid: 17392
+[./start-node.sh] Sleeping for 140 seconds to wait for Cassandra to start...
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.speciesData()]
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.make(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object)]
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendL(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,java.lang.Object)]
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendI(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,int)]
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendJ(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,long)]
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendF(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,float)]
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendD(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,double)]
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWith(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm)]
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.speciesData()]
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.make(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object,java.lang.Object)]
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendL(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,java.lang.Object)]
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendI(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,int)]
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendJ(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,long)]
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendF(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,float)]
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWithExtendD(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm,double)]
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: [java.lang.NullPointerException] [null] Exception when instrumenting method [java.lang.invoke.BoundMethodHandle$Species_LLLLLLL.copyWith(java.lang.invoke.MethodType,java.lang.invoke.LambdaForm)]
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer getLineNumber (219)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer findRanges (266)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at scaleview.agent.transformer.MethodTransformer transform (121)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at java.lang.instrument.ClassFileTransformer transform (246)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.TransformerManager transform (188)
+Jan 24, 2025 7:46:54 PM scaleview.agent.util.Logging exception
+SEVERE: at sun.instrument.InstrumentationImpl transform (563)
+Exception in thread "ProfilerMain" java.lang.LinkageError: loader 'bootstrap' attempted duplicate class definition for java.lang.invoke.BoundMethodHandle$Species_LLLLLLL. (java.lang.invoke.BoundMethodHandle$Species_LLLLLLL is in module java.base of loader 'bootstrap')
+	at java.base/jdk.internal.misc.Unsafe.defineClass0(Native Method)
+	at java.base/jdk.internal.misc.Unsafe.defineClass(Unsafe.java:1192)
+	at java.base/java.lang.invoke.ClassSpecializer$Factory.generateConcreteSpeciesCode(ClassSpecializer.java:593)
+	at java.base/java.lang.invoke.ClassSpecializer$Factory.loadSpecies(ClassSpecializer.java:490)
+	at java.base/java.lang.invoke.ClassSpecializer.findSpecies(ClassSpecializer.java:194)
+	at java.base/java.lang.invoke.BoundMethodHandle$SpeciesData.extendWith(BoundMethodHandle.java:352)
+	at java.base/java.lang.invoke.LambdaFormEditor.newSpeciesData(LambdaFormEditor.java:388)
+	at java.base/java.lang.invoke.LambdaFormEditor.makeArgumentCombinationForm(LambdaFormEditor.java:721)
+	at java.base/java.lang.invoke.LambdaFormEditor.foldArgumentsForm(LambdaFormEditor.java:844)
+	at java.base/java.lang.invoke.MethodHandles.foldArguments(MethodHandles.java:4323)
+	at java.base/java.lang.invoke.StringConcatFactory$MethodHandleInlineCopyStrategy.generate(StringConcatFactory.java:1560)
+	at java.base/java.lang.invoke.StringConcatFactory.generate(StringConcatFactory.java:756)
+	at java.base/java.lang.invoke.StringConcatFactory.doStringConcat(StringConcatFactory.java:665)
+	at java.base/java.lang.invoke.StringConcatFactory.makeConcatWithConstants(StringConcatFactory.java:581)
+	at java.base/java.lang.invoke.BootstrapMethodInvoker.invoke(BootstrapMethodInvoker.java:99)
+	at java.base/java.lang.invoke.CallSite.makeSite(CallSite.java:307)
+	at java.base/java.lang.invoke.MethodHandleNatives.linkCallSiteImpl(MethodHandleNatives.java:258)
+	at java.base/java.lang.invoke.MethodHandleNatives.linkCallSite(MethodHandleNatives.java:248)
+	at java.xml/javax.xml.parsers.FactoryFinder.find(FactoryFinder.java:238)
+	at java.xml/javax.xml.parsers.SAXParserFactory.newInstance(SAXParserFactory.java:147)
+	at ch.qos.logback.core.joran.event.SaxEventRecorder.buildSaxParser(SaxEventRecorder.java:79)
+	at ch.qos.logback.core.joran.event.SaxEventRecorder.recordEvents(SaxEventRecorder.java:57)
+	at ch.qos.logback.core.joran.GenericConfigurator.doConfigure(GenericConfigurator.java:151)
+	at ch.qos.logback.core.joran.GenericConfigurator.doConfigure(GenericConfigurator.java:110)
+	at ch.qos.logback.core.joran.GenericConfigurator.doConfigure(GenericConfigurator.java:53)
+	at ch.qos.logback.classic.util.ContextInitializer.configureByResource(ContextInitializer.java:64)
+	at ch.qos.logback.classic.util.ContextInitializer.autoConfig(ContextInitializer.java:134)
+	at org.slf4j.impl.StaticLoggerBinder.init(StaticLoggerBinder.java:84)
+	at org.slf4j.impl.StaticLoggerBinder.<clinit>(StaticLoggerBinder.java:55)
+	at org.slf4j.LoggerFactory.bind(LoggerFactory.java:150)
+	at org.slf4j.LoggerFactory.performInitialization(LoggerFactory.java:124)
+	at org.slf4j.LoggerFactory.getILoggerFactory(LoggerFactory.java:417)
+	at org.slf4j.LoggerFactory.getLogger(LoggerFactory.java:362)
+	at org.slf4j.LoggerFactory.getLogger(LoggerFactory.java:388)
+	at org.apache.cassandra.service.CassandraDaemon.<clinit>(CassandraDaemon.java:136)
+Jan 24, 2025 7:46:54 PM scaleview.agent.stub.ProfilingStub$1 run
+SEVERE: Shutting down profiling stub...
+
+
+--Get stuck 

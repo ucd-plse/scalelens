@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+ <property>
+    <name>dfs.namenode.rpc-address</name>
+    <value>@NN_IP:@RPC_PORT</value>
+ </property>
+ <property>
+    <name>dfs.namenode.servicerpc-address</name>
+    <value>@NN_IP:@SERVICE_PORT</value>
+ </property>
+  <property>
+    <name>dfs.name.dir</name>
+    <value>@NAME_DIR</value>
+  </property>
+  <property>
+      <name>dfs.replication</name>
+      <value>@REPLICATION</value>
+  </property>
+  <property>
+    <name>dfs.data.dir</name>
+    <value>@DATA_DIR</value>
+  </property>
+  <property>
+    <name>dfs.heartbeat.interval</name>
+    <value>@HB_SECS</value>
+  </property>
+  <property>
+    <name>dfs.webhdfs.enabled</name>
+    <value>false</value>
+  </property>
+  <property>
+    <name>dfs.blocksize</name>
+    <value>128</value>
+  </property>
+  <property>
+    <name>dfs.namenode.http-address</name>
+    <value>@NN_IP:@HTTP_PORT</value>
+  </property>
+  <property>
+    <name>dfs.namenode.fs-limits.min-block-size</name>
+    <value>16</value>
+  </property>
+  <property>
+    <name>dfs.bytes-per-checksum</name>
+    <value>4</value>
+  </property>
+</configuration>

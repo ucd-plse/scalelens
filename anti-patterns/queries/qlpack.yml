@@ -1,0 +1,4 @@
+name: scaleview-qlpack
+version: 1.0.0
+dependencies:
+  codeql/java-all: 1.1.1

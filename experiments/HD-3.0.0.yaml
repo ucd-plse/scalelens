@@ -1,0 +1,37 @@
+experiment:
+  system: HDFS
+  system_id: HD
+  version: 3.0.0
+  scale: &scale 32
+  batch_size: &batch_size 1024
+  cluster_base: &cluster_base test
+  sleep_time_normal: &sleep_time_normal 30
+  sleep_time_long: &sleep_time_long 120
+  trace_location:
+    - NN-1
+    - DN-1
+
+workloads:
+  add-data-snap:
+    filename: w-add-data-snap.sh
+    number_of_dimensions: 1
+    run: true
+    dimensions:
+      - databatch
+
+  add-dn-block:
+    filename: w-add-dn-block.sh
+    number_of_dimensions: 2
+    run: true
+    dimensions:
+      - datanode
+      - datablock
+
+  add-dn-file-snapdiff:
+    filename: w-add-dn-file-snapdiff.sh
+    number_of_dimensions: 2
+    run: true
+    dimensions:
+      - datanode
+      - file
+  

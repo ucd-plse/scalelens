@@ -1,0 +1,100 @@
+experiment:
+  system: Cassandra
+  system_id: CA
+  version: 3.0.10
+  scale: &scale 32
+  batch_size: &batch_size 1000
+  cluster_base: &cluster_base test
+  sleep_time_normal: &sleep_time_normal 30
+  sleep_time_long: &sleep_time_long 120
+  trace_location: node-1
+
+workloads:
+  add-ks:
+    filename: w-add-ks.sh
+    number_of_dimensions: 1
+    run: true
+    dimensions:
+      - keyspace
+
+  add-node:
+    filename: w-add-node.sh
+    number_of_dimensions: 1
+    run: true
+    dimensions:
+      - node
+
+  add-ks-snapshot:
+    filename: w-add-ks-snapshot.sh
+    number_of_dimensions: 1
+    run: true
+    dimensions:
+      - keyspace
+
+  add-ks-compact:
+    filename: w-add-ks-compact.sh
+    number_of_dimensions: 1
+    run: true
+    dimensions:
+      - keyspace
+
+  add-node-tok:
+    filename: w-add-node-tok.sh
+    number_of_dimensions: 2
+    run: true
+    dimensions:
+      - node
+      - token
+
+  add-row:
+    filename: w-add-row.sh
+    number_of_dimensions: 1
+    run: true
+    special_options: 
+      - *scale 
+      - *batch_size 
+      - *sleep_time_normal 
+      - *cluster_base
+    dimensions:
+      - row
+
+  add-row-scrub:
+    filename: w-add-row-scrub.sh
+    number_of_dimensions: 1
+    run: false
+    special_options: 
+      - *scale
+      - *batch_size
+      - *sleep_time_normal
+      - *cluster_base
+    dimensions:
+      - row
+
+  add-table:
+    filename: w-add-table.sh
+    number_of_dimensions: 1
+    run: true
+    dimensions:
+      - table
+
+  add-table-snapshot:
+    filename: w-add-table-snapshot.sh
+    number_of_dimensions: 1
+    run: true
+    dimensions:
+      - table
+
+  add-table-compact:
+    filename: w-add-table-compact.sh
+    number_of_dimensions: 1
+    run: true
+    dimensions:
+      - table
+
+  add-dc-tok:
+    filename: w-add-dc-tok.sh
+    number_of_dimensions: 2
+    run: true
+    dimensions:
+      - datacenter
+      - token

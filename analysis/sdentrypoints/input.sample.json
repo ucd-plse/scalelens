@@ -1,0 +1,8 @@
+{
+  "sdloops": [
+    { "className": "Fully qualifies class name, using . as separator",
+      "methodSignature" : "signature using name and args. example: method(int, int)",
+      "dimension" : { "name" : "name of the dimension that was scaled. Each loop depends on a single dimension"}
+    }
+  ]
+}

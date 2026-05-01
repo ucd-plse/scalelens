@@ -1,0 +1,22 @@
+%------------------------------------
+\documentclass[10pt]{article}
+\usepackage[margin=0.5in]{geometry}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\usepackage{graphicx}
+\usepackage{float}
+\extrafloats{200}
+\maxdeadcycles=500
+
+\begin{document}
+
+\def \fgw {1.5in}
+    \begin{figure}[h!]
+        \centerline {
+            \includegraphics[width=\fgw]{@IMAGES_FOLDER/linear.eps}
+            \includegraphics[width=\fgw]{@IMAGES_FOLDER/quadratic.eps}
+            \includegraphics[width=\fgw]{@IMAGES_FOLDER/cubic.eps}
+            \includegraphics[width=\fgw]{@IMAGES_FOLDER/quartic.eps}
+            \includegraphics[width=\fgw]{@IMAGES_FOLDER/quintic.eps}
+        }
+    \end{figure}

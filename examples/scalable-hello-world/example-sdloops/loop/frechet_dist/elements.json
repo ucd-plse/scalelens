@@ -1,0 +1,32 @@
+[
+  {
+    "methodName": "HelloWorld.whileLoopMethod",
+    "lineNumber": 60,
+    "dependencyType": "Loop",
+    "dimensionDescriptors": {
+      "linear": [
+        "x"
+      ]
+    }
+  },
+  {
+    "methodName": "HelloWorld.forLoopMethod",
+    "lineNumber": 51,
+    "dependencyType": "Loop",
+    "dimensionDescriptors": {
+      "linear": [
+        "x"
+      ]
+    }
+  },
+  {
+    "methodName": "HelloWorld.forLoopMethod",
+    "lineNumber": 52,
+    "dependencyType": "Cross",
+    "dimensionDescriptors": {
+      "super-linear": [
+        "x^2"
+      ]
+    }
+  }
+]
